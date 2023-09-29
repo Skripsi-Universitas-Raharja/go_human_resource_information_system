@@ -18,7 +18,7 @@ services:
       - ./mysqldb/schema.sql:/data/application/init.sql
     command: --init-file /data/application/init.sql
     ports:
-      - 3307:3306
+      - 3306
     networks:
       - app-network
 
