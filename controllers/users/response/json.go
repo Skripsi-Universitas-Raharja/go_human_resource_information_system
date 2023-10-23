@@ -16,7 +16,7 @@ type User struct {
 	Name      string         `json:"name"`
 	Password  string         `json:"password"`
 	Nip       string         `json:"nip"`
-	Division  string         `json:"divisiom"`
+	Division  string         `json:"division"`
 	Role      string         `json:"role"`
 }
 
