@@ -48,13 +48,13 @@ func (ctrl *AuthController) Login(c echo.Context) error {
 	ctx := c.Request().Context()
 
 	if err := c.Bind(&userInput); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, http.StatusBadRequest, true, "invalid request", "")
+		return controllers.NewResponseLogin(c, http.StatusBadRequest, http.StatusBadRequest, true, "invalid request", "")
 	}
 
 	err := userInput.Validate()
 
 	if err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, http.StatusBadRequest, true, "validation failed", "")
+		return controllers.NewResponseLogin(c, http.StatusBadRequest, http.StatusBadRequest, true, "validation failed", "")
 	}
 
 	token, err := ctrl.authUseCase.Login(ctx, userInput.ToDomainLogin())
@@ -62,8 +62,8 @@ func (ctrl *AuthController) Login(c echo.Context) error {
 	var isFailed bool = err != nil || token == ""
 
 	if isFailed {
-		return controllers.NewResponse(c, http.StatusUnauthorized, http.StatusUnauthorized, true, "invalid email or password", "")
+		return controllers.NewResponseLogin(c, http.StatusUnauthorized, http.StatusUnauthorized, true, "invalid email or password", "")
 	}
 
-	return controllers.NewResponse(c, http.StatusOK, http.StatusOK, false, "token created", token)
+	return controllers.NewResponseLogin(c, http.StatusOK, http.StatusOK, false, "token created", token)
 }
