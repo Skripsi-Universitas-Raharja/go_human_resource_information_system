@@ -1,7 +1,9 @@
 package mysql_driver
 
 import (
+	"backend-golang/drivers/mysql/profiles"
 	"backend-golang/drivers/mysql/users"
+
 	"fmt"
 	"log"
 
@@ -40,7 +42,7 @@ func (config *DBConfig) InitDB() *gorm.DB {
 }
 
 func MigrateDB(db *gorm.DB) {
-	err := db.AutoMigrate(&users.User{})
+	err := db.AutoMigrate(&users.User{}, &profiles.Profile{})
 
 	if err != nil {
 		log.Fatalf("failed to perform database migration: %s\n", err)

@@ -2,6 +2,8 @@ package users
 
 import (
 	"backend-golang/businesses/users"
+	"backend-golang/drivers/mysql/profiles"
+
 	"time"
 
 	"gorm.io/gorm"
@@ -18,6 +20,10 @@ type User struct {
 	Nip       string         `json:"nip"`
 	Division  string         `json:"division"`
 	Role      string         `json:"role"`
+	ProfileID uint           `json:"-" gorm:"uniqueIndex"`
+	Profile   profiles.Profile
+
+	// Profile   profiles.Profile `json:"-" gorm:"foreignKey:ProfileID"`
 }
 
 func (rec *User) ToDomain() users.Domain {
@@ -32,6 +38,8 @@ func (rec *User) ToDomain() users.Domain {
 		Nip:       rec.Nip,
 		Division:  rec.Division,
 		Role:      rec.Role,
+		ProfileID: rec.ProfileID,
+		Profile:   rec.Profile.ToDomain(),
 	}
 }
 
@@ -47,5 +55,7 @@ func FromDomain(domain *users.Domain) *User {
 		Nip:       domain.Nip,
 		Division:  domain.Division,
 		Role:      domain.Role,
+		ProfileID: domain.ProfileID,
+		Profile:   *profiles.FromDomain(&domain.Profile),
 	}
 }

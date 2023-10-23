@@ -1,6 +1,7 @@
 package users
 
 import (
+	"backend-golang/businesses/profiles"
 	"context"
 	"time"
 
@@ -18,14 +19,24 @@ type Domain struct {
 	Nip       string
 	Division  string
 	Role      string
+	ProfileID uint
+	Profile   profiles.Domain
 }
 
 type Usecase interface {
 	Register(ctx context.Context, userDomain *Domain) (Domain, error)
 	Login(ctx context.Context, userDomain *Domain) (string, error)
+
+	UpdateProfileUser(ctx context.Context, userDomain *Domain, id string) (Domain, error)
+	// ChangePicture(ctx context.Context, filename string, id string) (string, string, error)
+	// DeleteUser(ctx context.Context, id string) (error)
 }
 
 type Repository interface {
 	Register(ctx context.Context, userDomain *Domain) (Domain, error)
 	GetByEmail(ctx context.Context, userDomain *Domain) (Domain, error)
+
+	UpdateProfileUser(ctx context.Context, userDomain *Domain, id string) (Domain, error)
+	// ChangePicture(ctx context.Context, filename string, id string) (string, string, error)
+	// DeleteCustomer(ctx context.Context, id string) (error)
 }

@@ -67,3 +67,27 @@ func (ctrl *AuthController) Login(c echo.Context) error {
 
 	return controllers.NewResponseLogin(c, http.StatusOK, http.StatusOK, false, "token created", token)
 }
+
+func (ctrl *AuthController) UpdateProfileUser(c echo.Context) error {
+	var userID string = c.Param("id")
+	input := request.UserProfile{}
+
+	ctx := c.Request().Context()
+
+	if err := c.Bind(&input); err != nil {
+		return controllers.NewResponse(c, http.StatusBadRequest, http.StatusBadRequest, true, "invalid request", "")
+	}
+
+	err := input.Validate()
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusBadRequest, http.StatusBadRequest, true, "invalid request", "")
+	}
+
+	user, err := ctrl.authUseCase.UpdateProfileUser(ctx, input.ToDomain(), userID)
+
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusNotFound, http.StatusNotFound, true, err.Error(), "")
+	}
+
+	return controllers.NewResponse(c, http.StatusOK, http.StatusOK, false, "customer updated", response.FromDomain(user))
+}
