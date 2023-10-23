@@ -25,22 +25,22 @@ func (ctrl *AuthController) Register(c echo.Context) error {
 	ctx := c.Request().Context()
 
 	if err := c.Bind(&userInput); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
+		return controllers.NewResponse(c, http.StatusBadRequest, http.StatusBadRequest, true, "invalid request", "")
 	}
 
 	err := userInput.Validate()
 
 	if err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
+		return controllers.NewResponse(c, http.StatusBadRequest, http.StatusBadRequest, true, "validation failed", "")
 	}
 
 	user, err := ctrl.authUseCase.Register(ctx, userInput.ToDomain())
 
 	if err != nil {
-		return controllers.NewResponse(c, http.StatusInternalServerError, "failed", "error when inserting data", "")
+		return controllers.NewResponse(c, http.StatusInternalServerError, http.StatusInternalServerError, true, "error when inserting data", "")
 	}
 
-	return controllers.NewResponse(c, http.StatusCreated, "success", "user registered", response.FromDomain(user))
+	return controllers.NewResponse(c, http.StatusCreated, http.StatusCreated, false, "user registered", response.FromDomain(user))
 }
 
 func (ctrl *AuthController) Login(c echo.Context) error {
@@ -48,13 +48,13 @@ func (ctrl *AuthController) Login(c echo.Context) error {
 	ctx := c.Request().Context()
 
 	if err := c.Bind(&userInput); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
+		return controllers.NewResponse(c, http.StatusBadRequest, http.StatusBadRequest, true, "invalid request", "")
 	}
 
 	err := userInput.Validate()
 
 	if err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
+		return controllers.NewResponse(c, http.StatusBadRequest, http.StatusBadRequest, true, "validation failed", "")
 	}
 
 	token, err := ctrl.authUseCase.Login(ctx, userInput.ToDomainLogin())
@@ -62,8 +62,8 @@ func (ctrl *AuthController) Login(c echo.Context) error {
 	var isFailed bool = err != nil || token == ""
 
 	if isFailed {
-		return controllers.NewResponse(c, http.StatusUnauthorized, "failed", "invalid email or password", "")
+		return controllers.NewResponse(c, http.StatusUnauthorized, http.StatusUnauthorized, true, "invalid email or password", "")
 	}
 
-	return controllers.NewResponse(c, http.StatusOK, "success", "token created", token)
+	return controllers.NewResponse(c, http.StatusOK, http.StatusOK, false, "token created", token)
 }
