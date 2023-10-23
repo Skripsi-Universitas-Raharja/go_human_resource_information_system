@@ -7,12 +7,11 @@ import (
 )
 
 type Domain struct {
-	ID         uint
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
-	DeletedAt  gorm.DeletedAt
-	Name       string
-	Nip        string
-	Division   string
-	AvatarPath string
+	ID        uint
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt
+	Name      string
+	Nip       string
+	Division  string
 }
