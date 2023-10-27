@@ -14,4 +14,5 @@ type Domain struct {
 	Name      string
 	Nip       string
 	Division  string
+	ImagePath string
 }

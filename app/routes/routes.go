@@ -20,6 +20,7 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 
 	auth.POST("/register", cl.AuthController.Register)
 	auth.POST("/login", cl.AuthController.Login)
+	auth.POST("/logout", cl.AuthController.Logout)
 
 	users := e.Group("users", echojwt.WithConfig(cl.JWTMiddleware))
 	users.PUT("/profiles/customer/:id", cl.AuthController.UpdateProfileUser)

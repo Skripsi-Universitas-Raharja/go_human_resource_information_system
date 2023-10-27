@@ -24,9 +24,10 @@ type UserRegistration struct {
 }
 
 type UserProfile struct {
-	Name     string `json:"name" validate:"NotEmpty"`
-	Nip      string `json:"nip" validate:"required,NotEmpty"`
-	Division string `json:"division" validate:"required,NotEmpty"`
+	Name      string `json:"name" validate:"NotEmpty"`
+	Nip       string `json:"nip" validate:"required,NotEmpty"`
+	Division  string `json:"division" validate:"required,NotEmpty"`
+	ImagePath string `json:"image_path"`
 }
 
 func (req *UserLogin) ToDomainLogin() *users.Domain {

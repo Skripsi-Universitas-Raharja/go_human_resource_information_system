@@ -15,7 +15,7 @@ type Profile struct {
 	Name      string         `json:"name"`
 	Nip       string         `json:"nip"`
 	Division  string         `json:"division"`
-	// Photo     string         `json:"photo"`
+	ImagePath string         `json:"image_path"`
 }
 
 func (record *Profile) ToDomain() profiles.Domain {
@@ -27,7 +27,7 @@ func (record *Profile) ToDomain() profiles.Domain {
 		Name:      record.Name,
 		Nip:       record.Nip,
 		Division:  record.Division,
-		// Photo:     record.Photo,
+		ImagePath: record.ImagePath,
 	}
 }
 
@@ -40,6 +40,6 @@ func FromDomain(domain *profiles.Domain) *Profile {
 		Name:      domain.Name,
 		Nip:       domain.Nip,
 		Division:  domain.Division,
-		// Photo:     domain.Photo,
+		ImagePath: domain.ImagePath,
 	}
 }
