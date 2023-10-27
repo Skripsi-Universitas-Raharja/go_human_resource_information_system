@@ -22,8 +22,6 @@ type User struct {
 	Role      string         `json:"role"`
 	ProfileID uint           `json:"-" gorm:"uniqueIndex"`
 	Profile   profiles.Profile
-
-	// Profile   profiles.Profile `json:"-" gorm:"foreignKey:ProfileID"`
 }
 
 func (rec *User) ToDomain() users.Domain {

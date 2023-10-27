@@ -128,3 +128,21 @@ func (ur *userRepository) UpdateProfileUser(ctx context.Context, userDomain *use
 
 	return user.ToDomain(), nil
 }
+
+func (ur *userRepository) UploadProfileImage(ctx context.Context, avatarPath string, id string) (string, string, error) {
+	var profile profiles.Profile
+
+	if err := ur.conn.WithContext(ctx).First(&profile, "id = ?", id).Error; err != nil {
+		return "", "", err
+	}
+
+	prev_url := profile.ImagePath
+
+	profile.ImagePath = avatarPath
+
+	if err := ur.conn.WithContext(ctx).Save(&profile).Error; err != nil {
+		return "", "", err
+	}
+
+	return profile.ImagePath, prev_url, nil
+}

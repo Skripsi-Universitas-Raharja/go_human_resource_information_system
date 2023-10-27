@@ -7,10 +7,7 @@ import (
 	"backend-golang/controllers/users/request"
 	"backend-golang/controllers/users/response"
 
-	"fmt"
-	"io"
 	"net/http"
-	"os"
 
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
@@ -103,34 +100,6 @@ func (ctrl *AuthController) UpdateProfileUser(c echo.Context) error {
 		return controllers.NewResponse(c, http.StatusBadRequest, http.StatusBadRequest, true, "invalid request", "")
 	}
 
-	// Ambil file dari form
-	file, err := c.FormFile("image")
-	if err == nil {
-		// Buka file yang diupload
-		src, err := file.Open()
-		if err != nil {
-			return controllers.NewResponse(c, http.StatusInternalServerError, http.StatusInternalServerError, true, "failed to open uploaded file", "")
-		}
-		defer src.Close()
-
-		// Tentukan lokasi penyimpanan file (ganti dengan lokasi yang sesuai)
-		dstPath := fmt.Sprintf("uploads/%s_%s", userID, file.Filename)
-		dst, err := os.Create(dstPath)
-		if err != nil {
-			return controllers.NewResponse(c, http.StatusInternalServerError, http.StatusInternalServerError, true, "failed to create destination file", "")
-		}
-		defer dst.Close()
-
-		// Salin isi file ke file tujuan
-		if _, err = io.Copy(dst, src); err != nil {
-			return controllers.NewResponse(c, http.StatusInternalServerError, http.StatusInternalServerError, true, "failed to copy file", "")
-		}
-
-		// Di sini, Anda dapat menyimpan path file di database atau melakukan operasi lainnya sesuai kebutuhan
-		// Misalnya, simpan dstPath ke dalam field gambar di tabel pengguna
-		input.ImagePath = dstPath
-	}
-
 	user, err := ctrl.authUseCase.UpdateProfileUser(ctx, input.ToDomain(), userID)
 
 	if err != nil {
@@ -138,4 +107,28 @@ func (ctrl *AuthController) UpdateProfileUser(c echo.Context) error {
 	}
 
 	return controllers.NewResponse(c, http.StatusOK, http.StatusOK, false, "customer updated", response.FromDomain(user))
+}
+
+func (ctrl *AuthController) UploadProfileImage(c echo.Context) error {
+	userID := c.Param("id")
+	file, err := c.FormFile("image")
+
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusBadRequest, http.StatusBadRequest, true, "error handling file upload", "")
+	}
+
+	src, err := file.Open()
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusInternalServerError, http.StatusInternalServerError, true, "Unable to open file", "")
+	}
+	defer src.Close()
+
+	avatarPath := file.Filename
+	user, _, err := ctrl.authUseCase.UploadProfileImage(c.Request().Context(), avatarPath, userID)
+
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusNotFound, http.StatusNotFound, true, err.Error(), "")
+	}
+
+	return controllers.NewResponse(c, http.StatusOK, http.StatusOK, false, "customer profile image updated", user)
 }

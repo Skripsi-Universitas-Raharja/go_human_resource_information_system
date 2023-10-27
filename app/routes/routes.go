@@ -24,6 +24,7 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 
 	users := e.Group("users", echojwt.WithConfig(cl.JWTMiddleware))
 	users.PUT("/profiles/customer/:id", cl.AuthController.UpdateProfileUser)
+	users.PUT("/profiles/picture/:id", cl.AuthController.UploadProfileImage)
 
 	// course := e.Group("/api/v1/courses", echojwt.WithConfig(cl.JWTMiddleware))
 	// course.Use(middlewares.VerifyToken)

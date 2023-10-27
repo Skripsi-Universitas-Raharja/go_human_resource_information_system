@@ -27,7 +27,7 @@ func (record *Profile) ToDomain() profiles.Domain {
 		Name:      record.Name,
 		Nip:       record.Nip,
 		Division:  record.Division,
-		ImagePath: record.ImagePath,
+		// ImagePath: record.ImagePath,
 	}
 }
 
