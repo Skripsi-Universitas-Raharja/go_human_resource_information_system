@@ -1,7 +1,6 @@
 package request
 
 import (
-	"backend-golang/businesses/profiles"
 	"backend-golang/businesses/users"
 
 	"strings"
@@ -23,13 +22,6 @@ type UserRegistration struct {
 	Role     string `json:"role"`
 }
 
-type UserProfile struct {
-	Name      string `json:"name" validate:"NotEmpty"`
-	Nip       string `json:"nip" validate:"required,NotEmpty"`
-	Division  string `json:"division" validate:"required,NotEmpty"`
-	ImagePath string `json:"image_path"`
-}
-
 func (req *UserLogin) ToDomainLogin() *users.Domain {
 	return &users.Domain{
 		Email:    req.Email,
@@ -45,17 +37,6 @@ func (req *UserRegistration) ToDomain() *users.Domain {
 		Nip:      req.Nip,
 		Division: req.Division,
 		Role:     req.Role,
-	}
-}
-
-func (req *UserProfile) ToDomain() *users.Domain {
-	return &users.Domain{
-		Name: req.Name,
-		Profile: profiles.Domain{
-			Nip:      req.Nip,
-			Division: req.Division,
-			// Photo:     req.Photo,
-		},
 	}
 }
 
@@ -83,6 +64,6 @@ func (req *UserRegistration) Validate() error {
 	return validateRequest(req)
 }
 
-func (req UserProfile) Validate() error {
-	return validateRequest(req)
-}
+// func (req UserProfile) Validate() error {
+// 	return validateRequest(req)
+// }

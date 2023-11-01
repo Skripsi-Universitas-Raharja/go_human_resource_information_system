@@ -15,6 +15,9 @@ import (
 	_userUseCase "backend-golang/businesses/users"
 	_userController "backend-golang/controllers/users"
 
+	_profileUseCase "backend-golang/businesses/profiles"
+	_profileController "backend-golang/controllers/profiles"
+
 	_dbDriver "backend-golang/drivers/mysql"
 
 	_middleware "backend-golang/app/middlewares"
@@ -53,10 +56,15 @@ func main() {
 	userUsecase := _userUseCase.NewUserUseCase(userRepo, &configJWT)
 	userCtrl := _userController.NewAuthController(userUsecase)
 
+	profileRepo := _driverFactory.NewProfileRepository(db)
+	profileUsecase := _profileUseCase.NewProfileUseCase(profileRepo, &configJWT)
+	profileCtrl := _profileController.NewProfilesController(profileUsecase)
+
 	routesInit := _routes.ControllerList{
-		LoggerMiddleware: configLogger.Init(),
-		JWTMiddleware:    configJWT.Init(),
-		AuthController:   *userCtrl,
+		LoggerMiddleware:   configLogger.Init(),
+		JWTMiddleware:      configJWT.Init(),
+		AuthController:     *userCtrl,
+		ProfilesController: *profileCtrl,
 	}
 
 	routesInit.RegisterRoutes(e)

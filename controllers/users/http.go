@@ -3,6 +3,7 @@ package users
 import (
 	"backend-golang/app/middlewares"
 	"backend-golang/businesses/users"
+
 	"backend-golang/controllers"
 	"backend-golang/controllers/users/request"
 	"backend-golang/controllers/users/response"
@@ -85,50 +86,51 @@ func (ctrl *AuthController) Logout(c echo.Context) error {
 	return controllers.NewResponse(c, http.StatusOK, http.StatusOK, false, "logout success", isLoggedOut)
 }
 
-func (ctrl *AuthController) UpdateProfileUser(c echo.Context) error {
-	var userID string = c.Param("id")
-	input := request.UserProfile{}
+// func (ctrl *AuthController) UpdateProfileUser(c echo.Context) error {
+// 	var userID string = c.Param("id")
+// 	input := request.UserProfile{}
 
-	ctx := c.Request().Context()
+// 	ctx := c.Request().Context()
 
-	if err := c.Bind(&input); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, http.StatusBadRequest, true, "invalid request", "")
-	}
+// 	if err := c.Bind(&input); err != nil {
+// 		return controllers.NewResponse(c, http.StatusBadRequest, http.StatusBadRequest, true, "invalid request", "")
+// 	}
 
-	err := input.Validate()
-	if err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, http.StatusBadRequest, true, "invalid request", "")
-	}
+// 	err := input.Validate()
+// 	if err != nil {
+// 		return controllers.NewResponse(c, http.StatusBadRequest, http.StatusBadRequest, true, "invalid request", "")
+// 	}
 
-	user, err := ctrl.authUseCase.UpdateProfileUser(ctx, input.ToDomain(), userID)
+// 	user, err := ctrl.authUseCase.UpdateProfileUser(ctx, input.ToDomain(), userID)
 
-	if err != nil {
-		return controllers.NewResponse(c, http.StatusNotFound, http.StatusNotFound, true, err.Error(), "")
-	}
+// 	if err != nil {
+// 		return controllers.NewResponse(c, http.StatusNotFound, http.StatusNotFound, true, err.Error(), "")
+// 	}
 
-	return controllers.NewResponse(c, http.StatusOK, http.StatusOK, false, "customer updated", response.FromDomain(user))
-}
+// 	return controllers.NewResponse(c, http.StatusOK, http.StatusOK, false, "customer updated", response.FromDomain(user))
+// }
 
-func (ctrl *AuthController) UploadProfileImage(c echo.Context) error {
-	userID := c.Param("id")
-	file, err := c.FormFile("image")
+// func (ctrl *AuthController) UploadProfileImage(c echo.Context) error {
+// 	userID := c.Param("id")
+// 	file, err := c.FormFile("image")
 
-	if err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, http.StatusBadRequest, true, "error handling file upload", "")
-	}
+// 	if err != nil {
+// 		return controllers.NewResponse(c, http.StatusBadRequest, http.StatusBadRequest, true, "error handling file upload", "")
+// 	}
 
-	src, err := file.Open()
-	if err != nil {
-		return controllers.NewResponse(c, http.StatusInternalServerError, http.StatusInternalServerError, true, "Unable to open file", "")
-	}
-	defer src.Close()
+// 	src, err := file.Open()
+// 	if err != nil {
+// 		return controllers.NewResponse(c, http.StatusInternalServerError, http.StatusInternalServerError, true, "Unable to open file", "")
+// 	}
+// 	defer src.Close()
 
-	avatarPath := file.Filename
-	user, _, err := ctrl.authUseCase.UploadProfileImage(c.Request().Context(), avatarPath, userID)
+// 	avatarPath := file.Filename
+// 	// user, _, err := ctrl.authUseCase.UploadProfileImage(c.Request().Context(), avatarPath, userID)
+// 	user, _, err := ctrl.authUseCase.UploadProfileImage(ctx, input.ToDomain(), avatarPath, userID)
 
-	if err != nil {
-		return controllers.NewResponse(c, http.StatusNotFound, http.StatusNotFound, true, err.Error(), "")
-	}
+// 	if err != nil {
+// 		return controllers.NewResponse(c, http.StatusNotFound, http.StatusNotFound, true, err.Error(), "")
+// 	}
 
-	return controllers.NewResponse(c, http.StatusOK, http.StatusOK, false, "customer profile image updated", user)
-}
+// 	return controllers.NewResponse(c, http.StatusOK, http.StatusOK, false, "customer profile image updated", user)
+// }

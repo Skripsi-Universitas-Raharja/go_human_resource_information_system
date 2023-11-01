@@ -37,10 +37,10 @@ func (usecase *userUsecase) Login(ctx context.Context, userDomain *Domain) (stri
 	return token, nil
 }
 
-func (usecase *userUsecase) UpdateProfileUser(ctx context.Context, userDomain *Domain, id string) (Domain, error) {
-	return usecase.userRepository.UpdateProfileUser(ctx, userDomain, id)
-}
+// func (usecase *userUsecase) UpdateProfileUser(ctx context.Context, userDomain *Domain, id string) (Domain, error) {
+// 	return usecase.userRepository.UpdateProfileUser(ctx, userDomain, id)
+// }
 
-func (usecase *userUsecase) UploadProfileImage(ctx context.Context, avatarPath string, id string) (string, string, error) {
-	return usecase.userRepository.UploadProfileImage(ctx, avatarPath, id)
-}
+// func (usecase *userUsecase) UploadProfileImage(ctx context.Context, userDomain *Domain, avatarPath string, id string) (Domain, string, error) {
+// 	return usecase.userRepository.UploadProfileImage(ctx, userDomain, avatarPath, id)
+// }
