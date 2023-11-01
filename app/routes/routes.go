@@ -2,6 +2,7 @@ package routes
 
 import (
 	profiles "backend-golang/controllers/profiles"
+	stocks "backend-golang/controllers/stocks"
 	users "backend-golang/controllers/users"
 
 	echojwt "github.com/labstack/echo-jwt/v4"
@@ -13,6 +14,7 @@ type ControllerList struct {
 	JWTMiddleware      echojwt.Config
 	AuthController     users.AuthController
 	ProfilesController profiles.ProfilesController
+	StocksController   stocks.StockController
 }
 
 func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
@@ -28,6 +30,13 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	users.GET("/:id", cl.ProfilesController.GetByID)
 	users.PUT("/profiles/customer/:id", cl.ProfilesController.UpdateProfileUser)
 	users.PUT("/profiles/picture/:id", cl.ProfilesController.UploadProfileImage)
+
+	stocks := e.Group("stocks", echojwt.WithConfig(cl.JWTMiddleware))
+	stocks.GET("/:id", cl.StocksController.GetByID)
+	stocks.POST("", cl.StocksController.Create)
+	// stocks.POST("/stock_in", cl.StocksController.Create)
+	stocks.PUT("/stock_in/:id", cl.StocksController.StockIn)
+	stocks.PUT("/stock_out/:id", cl.StocksController.StockOut)
 
 	// course := e.Group("/api/v1/courses", echojwt.WithConfig(cl.JWTMiddleware))
 	// course.Use(middlewares.VerifyToken)

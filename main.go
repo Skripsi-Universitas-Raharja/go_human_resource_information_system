@@ -18,6 +18,9 @@ import (
 	_profileUseCase "backend-golang/businesses/profiles"
 	_profileController "backend-golang/controllers/profiles"
 
+	_stockUseCase "backend-golang/businesses/stocks"
+	_stockController "backend-golang/controllers/stocks"
+
 	_dbDriver "backend-golang/drivers/mysql"
 
 	_middleware "backend-golang/app/middlewares"
@@ -60,11 +63,16 @@ func main() {
 	profileUsecase := _profileUseCase.NewProfileUseCase(profileRepo, &configJWT)
 	profileCtrl := _profileController.NewProfilesController(profileUsecase)
 
+	stockRepo := _driverFactory.NewStockRepository(db)
+	stockUsecase := _stockUseCase.NewStockUseCase(stockRepo, &configJWT)
+	stockCtrl := _stockController.NewStockController(stockUsecase)
+
 	routesInit := _routes.ControllerList{
 		LoggerMiddleware:   configLogger.Init(),
 		JWTMiddleware:      configJWT.Init(),
 		AuthController:     *userCtrl,
 		ProfilesController: *profileCtrl,
+		StocksController:   *stockCtrl,
 	}
 
 	routesInit.RegisterRoutes(e)
