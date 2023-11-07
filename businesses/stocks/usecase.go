@@ -21,6 +21,10 @@ func (usecase *stockUsecase) GetByID(ctx context.Context, id string) (Domain, er
 	return usecase.stockRepository.GetByID(ctx, id)
 }
 
+func (usecase *stockUsecase) DownloadBarcodeByID(ctx context.Context, id string) (Domain, error) {
+	return usecase.stockRepository.DownloadBarcodeByID(ctx, id)
+}
+
 func (usecase *stockUsecase) Create(ctx context.Context, stockDomain *Domain) (Domain, error) {
 	return usecase.stockRepository.Create(ctx, stockDomain)
 }

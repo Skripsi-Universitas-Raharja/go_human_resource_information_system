@@ -1,0 +1,26 @@
+package stockouts
+
+import (
+	"backend-golang/app/middlewares"
+	"context"
+)
+
+type stockoutUsecase struct {
+	stockRepository Repository
+	jwtAuth         *middlewares.JWTConfig
+}
+
+func NewStockOutUseCase(repository Repository, jwtAuth *middlewares.JWTConfig) Usecase {
+	return &stockoutUsecase{
+		stockRepository: repository,
+		jwtAuth:         jwtAuth,
+	}
+}
+
+func (usecase *stockoutUsecase) GetByID(ctx context.Context, id string) (Domain, error) {
+	return usecase.stockRepository.GetByID(ctx, id)
+}
+
+func (usecase *stockoutUsecase) StockOut(ctx context.Context, stockDomain *Domain) (Domain, error) {
+	return usecase.stockRepository.StockOut(ctx, stockDomain)
+}

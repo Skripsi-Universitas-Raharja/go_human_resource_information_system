@@ -2,6 +2,9 @@ package mysql_driver
 
 import (
 	"backend-golang/drivers/mysql/profiles"
+	stockhistory "backend-golang/drivers/mysql/stock_history"
+	stockouts "backend-golang/drivers/mysql/stock_outs"
+
 	"backend-golang/drivers/mysql/stocks"
 	"backend-golang/drivers/mysql/users"
 
@@ -43,7 +46,7 @@ func (config *DBConfig) InitDB() *gorm.DB {
 }
 
 func MigrateDB(db *gorm.DB) {
-	err := db.AutoMigrate(&users.User{}, &profiles.Profile{}, &stocks.Stock{})
+	err := db.AutoMigrate(&users.User{}, &profiles.Profile{}, &stocks.Stock{}, &stockouts.StockOut{}, &stockhistory.StockHistory{})
 
 	if err != nil {
 		log.Fatalf("failed to perform database migration: %s\n", err)

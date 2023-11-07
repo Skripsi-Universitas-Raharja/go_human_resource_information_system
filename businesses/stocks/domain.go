@@ -13,14 +13,17 @@ type Domain struct {
 	UpdatedAt      time.Time
 	DeletedAt      gorm.DeletedAt
 	Stock_Location string
+	Stock_Code     string
+	Stock_QRCode   string
 	Stock_Name     string
 	Unit           string
-	Stock_In       float64
-	Stock_Out      float64
-	Stock_Total    float64
+	Stock_In       int
+	Stock_Out      int
+	Stock_Total    int
 }
 type Usecase interface {
 	GetByID(ctx context.Context, id string) (Domain, error)
+	DownloadBarcodeByID(ctx context.Context, id string) (Domain, error)
 	Create(ctx context.Context, categoryDomain *Domain) (Domain, error)
 	StockIn(ctx context.Context, categoryDomain *Domain, id string) (Domain, error)
 	StockOut(ctx context.Context, categoryDomain *Domain, id string) (Domain, error)
@@ -33,6 +36,7 @@ type Usecase interface {
 type Repository interface {
 	GetByID(ctx context.Context, id string) (Domain, error)
 	Create(ctx context.Context, categoryDomain *Domain) (Domain, error)
+	DownloadBarcodeByID(ctx context.Context, id string) (Domain, error)
 	StockIn(ctx context.Context, categoryDomain *Domain, id string) (Domain, error)
 	StockOut(ctx context.Context, categoryDomain *Domain, id string) (Domain, error)
 

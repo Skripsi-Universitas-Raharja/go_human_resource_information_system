@@ -21,6 +21,12 @@ import (
 	_stockUseCase "backend-golang/businesses/stocks"
 	_stockController "backend-golang/controllers/stocks"
 
+	_stockhistorykUseCase "backend-golang/businesses/stock_history"
+	_stockhistoryController "backend-golang/controllers/stock_history"
+
+	_stockoutkUseCase "backend-golang/businesses/stock_outs"
+	_stockoutController "backend-golang/controllers/stock_outs"
+
 	_dbDriver "backend-golang/drivers/mysql"
 
 	_middleware "backend-golang/app/middlewares"
@@ -67,12 +73,22 @@ func main() {
 	stockUsecase := _stockUseCase.NewStockUseCase(stockRepo, &configJWT)
 	stockCtrl := _stockController.NewStockController(stockUsecase)
 
+	stockHistoryRepo := _driverFactory.NewStockHistoryRepository(db)
+	stockHistoryUsecase := _stockhistorykUseCase.NewStockHistoryUseCase(stockHistoryRepo, &configJWT)
+	stockHistoryCtrl := _stockhistoryController.NewStockHistoryController(stockHistoryUsecase)
+
+	stockoutRepo := _driverFactory.NewStockOutRepository(db)
+	stockoutUsecase := _stockoutkUseCase.NewStockOutUseCase(stockoutRepo, &configJWT)
+	stockoutCtrl := _stockoutController.NewStockOutController(stockoutUsecase)
+
 	routesInit := _routes.ControllerList{
-		LoggerMiddleware:   configLogger.Init(),
-		JWTMiddleware:      configJWT.Init(),
-		AuthController:     *userCtrl,
-		ProfilesController: *profileCtrl,
-		StocksController:   *stockCtrl,
+		LoggerMiddleware:       configLogger.Init(),
+		JWTMiddleware:          configJWT.Init(),
+		AuthController:         *userCtrl,
+		ProfilesController:     *profileCtrl,
+		StocksController:       *stockCtrl,
+		StockHistoryController: *stockHistoryCtrl,
+		StockOutsController:    *stockoutCtrl,
 	}
 
 	routesInit.RegisterRoutes(e)
