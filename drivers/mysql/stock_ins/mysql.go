@@ -103,10 +103,12 @@ func (sr *stockInRepository) StockIn(ctx context.Context, stockInDomain *stockin
 	record.Stock_Code = stock.Stock_Code
 	record.Stock_Name = stock.Stock_Name
 	record.Stock_Unit = stock.Unit
+	// record.StockInTransactions.Stock_Total = stock.Stock_Total
 	record.Stock_Total = stock.Stock_Total
+
 	fmt.Println("Record StockTotal:", record.Stock_Total)
 
-	// Simpan total stok yang diperbarui di tabel riwayat stok
+	// Simpan total stok yang diperbarui di tabel riwayat stok in
 	if err := sr.conn.WithContext(ctx).Save(&record).Error; err != nil {
 		return stockins.Domain{}, err
 	}

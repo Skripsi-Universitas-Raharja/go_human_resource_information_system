@@ -18,7 +18,7 @@ type StockIn struct {
 	Stock_Name          string         `json:"stock_name"`
 	Stock_Unit          string         `json:"stock_unit"`
 	Stock_In            int            `json:"stock_in"`
-	Stock_Total         int            `json:"stock_total"`
+	Stock_Total         int            `json:"stock_total,omitempty"`
 	StockInTransactions stocks.Stock   `json:"-" gorm:"foreignKey:StockID"`
 	StockID             uint           `json:"stock_id"`
 }
@@ -33,7 +33,7 @@ func (rec *StockIn) ToDomain() stockins.Domain {
 		Stock_Name:     rec.Stock_Name,
 		Stock_Unit:     rec.Stock_Unit,
 		Stock_In:       rec.Stock_In,
-		Stock_Total:    rec.StockInTransactions.Stock_Total,
+		Stock_Total:    rec.Stock_Total,
 		StockID:        rec.StockID,
 	}
 }
