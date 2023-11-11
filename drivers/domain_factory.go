@@ -13,6 +13,9 @@ import (
 	stockhistoryDomain "backend-golang/businesses/stock_history"
 	stockhistoryDB "backend-golang/drivers/mysql/stock_history"
 
+	stockInDomain "backend-golang/businesses/stock_ins"
+	stockInDB "backend-golang/drivers/mysql/stock_ins"
+
 	stockoutDomain "backend-golang/businesses/stock_outs"
 	stockoutDB "backend-golang/drivers/mysql/stock_outs"
 
@@ -33,6 +36,10 @@ func NewStockRepository(conn *gorm.DB) stockDomain.Repository {
 
 func NewStockHistoryRepository(conn *gorm.DB) stockhistoryDomain.Repository {
 	return stockhistoryDB.NewMySQLRepository(conn)
+}
+
+func NewStockInRepository(conn *gorm.DB) stockInDomain.Repository {
+	return stockInDB.NewMySQLRepository(conn)
 }
 
 func NewStockOutRepository(conn *gorm.DB) stockoutDomain.Repository {

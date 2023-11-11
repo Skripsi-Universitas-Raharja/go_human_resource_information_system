@@ -73,14 +73,14 @@ func (cc *StockController) DownloadBarcodeByID(c echo.Context) error {
 	}
 
 	// Generate QR code with stockID
+	// tanpa total stock agar barcodenya tidak terjadi perubahan ketika update data
 	qrContent := fmt.Sprintf("Stock ID: %s\n"+
 		"Created At: %s\n"+
 		"Stock Location: %s\n"+
 		"Stock Code: %s\n"+
 		"Stock Name: %s\n"+
 		"Unit: %s\n"+
-		"Stock Total: %d",
-		stockID, stock.CreatedAt, stock.Stock_Location, stock.Stock_Code, stock.Stock_Name, stock.Unit, stock.Stock_Total)
+		stockID, stock.CreatedAt, stock.Stock_Location, stock.Stock_Code, stock.Stock_Name, stock.Unit)
 
 	qrCode, err := qrcode.New(qrContent, qrcode.Medium)
 	if err != nil {
@@ -100,52 +100,52 @@ func (cc *StockController) DownloadBarcodeByID(c echo.Context) error {
 	return controllers.NewResponse(c, http.StatusOK, http.StatusOK, false, "Download", response.FromDomain(stock))
 }
 
-func (sc *StockController) StockIn(c echo.Context) error {
-	input := request.Stock{}
-	ctx := c.Request().Context()
+// func (sc *StockController) StockIn(c echo.Context) error {
+// 	input := request.Stock{}
+// 	ctx := c.Request().Context()
 
-	stockID := c.Param("id")
+// 	stockID := c.Param("id")
 
-	if err := c.Bind(&input); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, http.StatusBadRequest, true, "invalid request", "")
-	}
+// 	if err := c.Bind(&input); err != nil {
+// 		return controllers.NewResponse(c, http.StatusBadRequest, http.StatusBadRequest, true, "invalid request", "")
+// 	}
 
-	err := input.Validate()
+// 	err := input.Validate()
 
-	if err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, http.StatusBadRequest, true, "invalid request", "")
-	}
+// 	if err != nil {
+// 		return controllers.NewResponse(c, http.StatusBadRequest, http.StatusBadRequest, true, "invalid request", "")
+// 	}
 
-	stock, err := sc.stockUseCase.StockIn(ctx, input.ToDomain(), stockID)
+// 	stock, err := sc.stockUseCase.StockIn(ctx, input.ToDomain(), stockID)
 
-	if err != nil {
-		return controllers.NewResponse(c, http.StatusInternalServerError, http.StatusInternalServerError, true, "failed to add a stock", "")
-	}
+// 	if err != nil {
+// 		return controllers.NewResponse(c, http.StatusInternalServerError, http.StatusInternalServerError, true, "failed to add a stock", "")
+// 	}
 
-	return controllers.NewResponse(c, http.StatusCreated, http.StatusCreated, false, "stock registered", response.FromDomain(stock))
-}
+// 	return controllers.NewResponse(c, http.StatusCreated, http.StatusCreated, false, "stock registered", response.FromDomain(stock))
+// }
 
-func (sc *StockController) StockOut(c echo.Context) error {
-	input := request.Stock{}
-	ctx := c.Request().Context()
+// func (sc *StockController) StockOut(c echo.Context) error {
+// 	input := request.Stock{}
+// 	ctx := c.Request().Context()
 
-	stockID := c.Param("id")
+// 	stockID := c.Param("id")
 
-	if err := c.Bind(&input); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, http.StatusBadRequest, true, "invalid request", "")
-	}
+// 	if err := c.Bind(&input); err != nil {
+// 		return controllers.NewResponse(c, http.StatusBadRequest, http.StatusBadRequest, true, "invalid request", "")
+// 	}
 
-	err := input.Validate()
+// 	err := input.Validate()
 
-	if err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, http.StatusBadRequest, true, "invalid request", "")
-	}
+// 	if err != nil {
+// 		return controllers.NewResponse(c, http.StatusBadRequest, http.StatusBadRequest, true, "invalid request", "")
+// 	}
 
-	stock, err := sc.stockUseCase.StockOut(ctx, input.ToDomain(), stockID)
+// 	stock, err := sc.stockUseCase.StockOut(ctx, input.ToDomain(), stockID)
 
-	if err != nil {
-		return controllers.NewResponse(c, http.StatusInternalServerError, http.StatusInternalServerError, true, "failed to out a stock", "")
-	}
+// 	if err != nil {
+// 		return controllers.NewResponse(c, http.StatusInternalServerError, http.StatusInternalServerError, true, "failed to out a stock", "")
+// 	}
 
-	return controllers.NewResponse(c, http.StatusCreated, http.StatusCreated, false, "stock registered", response.FromDomain(stock))
-}
+// 	return controllers.NewResponse(c, http.StatusCreated, http.StatusCreated, false, "stock registered", response.FromDomain(stock))
+// }

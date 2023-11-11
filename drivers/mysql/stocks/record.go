@@ -3,7 +3,7 @@ package stocks
 import (
 	"backend-golang/businesses/stocks"
 	// stockhistory "backend-golang/drivers/mysql/stock_history"
-	stockouts "backend-golang/drivers/mysql/stock_outs"
+	// stockins "backend-golang/drivers/mysql/stock_ins"
 
 	"time"
 
@@ -20,14 +20,7 @@ type Stock struct {
 	Stock_QRCode   string         `json:"stock_qrcode"`
 	Stock_Name     string         `json:"stock_name"`
 	Unit           string         `json:"unit"`
-	Stock_In       int            `json:"stock_in"`
-	// Stock_Out      float64
-	Stock_Total int                  `json:"stock_total"`
-	Stock_Out   []stockouts.StockOut `json:"-" gorm:"foreignKey:StockID"`
-	// sembunyikan dulu agar dapat berjalan
-	// 	STRAINT `fk_stocks_stock_history` FOREIGN KEY (`stock_id`) REFERENCES `stocks`(`id`)
-	// 2023/11/07 01:49:26 failed to perform database migration: Error 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`hrisdb`.`#sql-683c_f`, CONSTRAINT `fk_stocks_stock_history` FOREIGN KEY (`stock_id`) REFERENCES `stocks` (`id`))
-	// Stock_History []stockhistory.StockHistory `json:"-" gorm:"foreignKey:StockID"`
+	Stock_Total    int            `json:"stock_total"`
 }
 
 func (rec *Stock) ToDomain() stocks.Domain {
@@ -40,11 +33,9 @@ func (rec *Stock) ToDomain() stocks.Domain {
 		Stock_Location: rec.Stock_Location,
 		Stock_Name:     rec.Stock_Name,
 		Unit:           rec.Unit,
-		Stock_In:       rec.Stock_In,
 		Stock_Total:    rec.Stock_Total,
 	}
 }
-
 func FromDomain(domain *stocks.Domain) *Stock {
 	return &Stock{
 		ID:             domain.ID,
@@ -55,7 +46,6 @@ func FromDomain(domain *stocks.Domain) *Stock {
 		Stock_Code:     domain.Stock_Code,
 		Stock_Name:     domain.Stock_Name,
 		Unit:           domain.Unit,
-		Stock_In:       domain.Stock_In,
 		Stock_Total:    domain.Stock_Total,
 	}
 }

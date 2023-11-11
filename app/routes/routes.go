@@ -3,6 +3,7 @@ package routes
 import (
 	profiles "backend-golang/controllers/profiles"
 	stockhistory "backend-golang/controllers/stock_history"
+	stockins "backend-golang/controllers/stock_ins"
 	stockouts "backend-golang/controllers/stock_outs"
 	stocks "backend-golang/controllers/stocks"
 	users "backend-golang/controllers/users"
@@ -17,6 +18,7 @@ type ControllerList struct {
 	AuthController         users.AuthController
 	ProfilesController     profiles.ProfilesController
 	StocksController       stocks.StockController
+	StockInsController     stockins.StockInController
 	StockOutsController    stockouts.StockOutController
 	StockHistoryController stockhistory.StockHistoryController
 }
@@ -35,13 +37,16 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	users.PUT("/profiles/customer/:id", cl.ProfilesController.UpdateProfileUser)
 	users.PUT("/profiles/picture/:id", cl.ProfilesController.UploadProfileImage)
 
-	// stocks := e.Group("stocks", echojwt.WithConfig(cl.JWTMiddleware))
-	stocks := e.Group("stocks")
+	stocks := e.Group("stocks", echojwt.WithConfig(cl.JWTMiddleware))
 	stocks.GET("/:id", cl.StocksController.GetByID)
 	stocks.GET("/:id", cl.StocksController.DownloadBarcodeByID)
 	stocks.POST("", cl.StocksController.Create)
-	stocks.PUT("/stock_in/:id", cl.StocksController.StockIn)
-	stocks.PUT("/stock_out/:id", cl.StocksController.StockOut)
+	// stocks.PUT("/stock_in/:id", cl.StocksController.StockIn)
+	// stocks.PUT("/stock_out/:id", cl.StocksController.StockOut)
+
+	stockIns := e.Group("stock_ins", echojwt.WithConfig(cl.JWTMiddleware))
+	stockIns.POST("/create", cl.StockInsController.Create)
+	stockIns.POST("", cl.StockInsController.StockIn)
 
 	stockouts := e.Group("stock_outs", echojwt.WithConfig(cl.JWTMiddleware))
 	stockouts.POST("", cl.StockOutsController.StockOut)

@@ -24,6 +24,9 @@ import (
 	_stockhistorykUseCase "backend-golang/businesses/stock_history"
 	_stockhistoryController "backend-golang/controllers/stock_history"
 
+	_stockInUseCase "backend-golang/businesses/stock_ins"
+	_stockInController "backend-golang/controllers/stock_ins"
+
 	_stockoutkUseCase "backend-golang/businesses/stock_outs"
 	_stockoutController "backend-golang/controllers/stock_outs"
 
@@ -77,6 +80,10 @@ func main() {
 	stockHistoryUsecase := _stockhistorykUseCase.NewStockHistoryUseCase(stockHistoryRepo, &configJWT)
 	stockHistoryCtrl := _stockhistoryController.NewStockHistoryController(stockHistoryUsecase)
 
+	stockInRepo := _driverFactory.NewStockInRepository(db)
+	stockInUsecase := _stockInUseCase.NewStockInUsecase(stockInRepo, &configJWT)
+	stockInCtrl := _stockInController.NewStockInController(stockInUsecase)
+
 	stockoutRepo := _driverFactory.NewStockOutRepository(db)
 	stockoutUsecase := _stockoutkUseCase.NewStockOutUseCase(stockoutRepo, &configJWT)
 	stockoutCtrl := _stockoutController.NewStockOutController(stockoutUsecase)
@@ -89,6 +96,7 @@ func main() {
 		StocksController:       *stockCtrl,
 		StockHistoryController: *stockHistoryCtrl,
 		StockOutsController:    *stockoutCtrl,
+		StockInsController:     *stockInCtrl,
 	}
 
 	routesInit.RegisterRoutes(e)
