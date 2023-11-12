@@ -4,8 +4,6 @@ import (
 	"context"
 	"time"
 
-	// "backend-golang/businesses/stocks"
-
 	"gorm.io/gorm"
 )
 

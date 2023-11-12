@@ -7,20 +7,24 @@ import (
 )
 
 type StockOut struct {
-	Stock_Location string  `json:"stock_location" validate:"required"`
-	Stock_Name     string  `json:"stock_name" validate:"required"`
-	Unit           string  `json:"unit" validate:"required"`
-	Stock_Out      float64 `json:"stock_out"`
-	Stock_Total    float64 `json:"stock_total"`
+	Stock_Location string `json:"stock_location"`
+	Stock_Code     string `json:"stock_code"`
+	Stock_Name     string `json:"stock_name"`
+	Stock_Unit     string `json:"stock_unit"`
+	Stock_Out      int    `json:"stock_out"`
+	Stock_Total    int    `json:"stock_total"`
+	StockID        uint   `json:"stock_id"`
 }
 
 func (req *StockOut) ToDomain() *stockouts.Domain {
 	return &stockouts.Domain{
 		Stock_Location: req.Stock_Location,
+		Stock_Code:     req.Stock_Code,
 		Stock_Name:     req.Stock_Name,
-		Unit:           req.Unit,
+		Stock_Unit:     req.Stock_Unit,
 		Stock_Out:      req.Stock_Out,
 		Stock_Total:    req.Stock_Total,
+		StockID:        req.StockID,
 	}
 }
 

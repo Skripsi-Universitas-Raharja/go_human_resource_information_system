@@ -67,11 +67,11 @@ func (cc *StockInController) StockIn(c echo.Context) error {
 		return controllers.NewResponse(c, http.StatusBadRequest, http.StatusBadRequest, true, "invalid request", "")
 	}
 
-	stockHistory, err := cc.stockUsecase.StockIn(ctx, input.ToDomain())
+	stockIn, err := cc.stockUsecase.StockIn(ctx, input.ToDomain())
 
 	if err != nil {
 		return controllers.NewResponse(c, http.StatusInternalServerError, http.StatusInternalServerError, true, "failed to add a stock", "")
 	}
 
-	return controllers.NewResponse(c, http.StatusCreated, http.StatusCreated, false, "stock transaction created", response.FromDomain(stockHistory))
+	return controllers.NewResponse(c, http.StatusCreated, http.StatusCreated, false, "stock transaction created", response.FromDomain(stockIn))
 }

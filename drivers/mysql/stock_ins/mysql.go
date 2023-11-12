@@ -2,7 +2,6 @@ package stockins
 
 import (
 	stockins "backend-golang/businesses/stock_ins"
-	// "backend-golang/businesses/stocks"
 	"context"
 	"fmt"
 
@@ -38,41 +37,6 @@ func (sr *stockInRepository) Create(ctx context.Context, stockInDomain *stockins
 
 	return record.ToDomain(), nil
 }
-
-// func (sr *stockInRepository) StockIn(ctx context.Context, stockDomain *stocks.Domain) (stocks.Domain, error) {
-// 	record := _dbStocks.FromDomain(stockDomain)
-
-// 	// Buat rekam stok pada riwayat
-// 	result := sr.conn.WithContext(ctx).Create(&record)
-// 	if err := result.Error; err != nil {
-// 		return stocks.Domain{}, err
-// 	}
-
-// 	// Perbarui total stok di tabel stok
-// 	var stockIn StockIn
-// 	if err := sr.conn.WithContext(ctx).First(&stockIn, "id = ?", record.ID).Error; err != nil {
-// 		return stocks.Domain{}, err
-// 	}
-
-// 	record.Stock_Total += stockIn.Stock_In
-// 	fmt.Println("StockTotal after addition:", stockIn.Stock_Total)
-
-// 	// Simpan total stok yang diperbarui di tabel stok
-// 	if err := sr.conn.WithContext(ctx).Save(&stockIn).Error; err != nil {
-// 		return stocks.Domain{}, err
-// 	}
-
-// 	// Perbarui total stok pada rekam riwayat stok
-// 	record.Stock_Total = stockIn.Stock_Total
-// 	fmt.Println("Record StockTotal:", record.Stock_Total)
-
-// 	// Simpan total stok yang diperbarui di tabel riwayat stok
-// 	if err := sr.conn.WithContext(ctx).Save(&record).Error; err != nil {
-// 		return stocks.Domain{}, err
-// 	}
-
-// 	return record.ToDomain(), nil
-// }
 
 func (sr *stockInRepository) StockIn(ctx context.Context, stockInDomain *stockins.Domain) (stockins.Domain, error) {
 	record := FromDomain(stockInDomain)
