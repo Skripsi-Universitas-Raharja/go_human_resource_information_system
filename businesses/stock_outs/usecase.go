@@ -24,3 +24,7 @@ func (usecase *stockoutUsecase) GetByID(ctx context.Context, id string) (Domain,
 func (usecase *stockoutUsecase) StockOut(ctx context.Context, stockDomain *Domain) (Domain, error) {
 	return usecase.stockRepository.StockOut(ctx, stockDomain)
 }
+
+func (usecase *stockoutUsecase) ExportToExcel(ctx context.Context) ([]Domain, error) {
+	return usecase.stockRepository.ExportToExcel(ctx)
+}

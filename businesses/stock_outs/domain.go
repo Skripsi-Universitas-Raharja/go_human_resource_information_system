@@ -22,9 +22,11 @@ type Domain struct {
 type Usecase interface {
 	GetByID(ctx context.Context, id string) (Domain, error)
 	StockOut(ctx context.Context, stockOutDomain *Domain) (Domain, error)
+	ExportToExcel(ctx context.Context) ([]Domain, error)
 }
 
 type Repository interface {
 	GetByID(ctx context.Context, id string) (Domain, error)
 	StockOut(ctx context.Context, stockOutDomain *Domain) (Domain, error)
+	ExportToExcel(ctx context.Context) ([]Domain, error)
 }

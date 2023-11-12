@@ -73,3 +73,56 @@ func (sr *stockOutRepository) StockOut(ctx context.Context, stockOutDomain *stoc
 	return record.ToDomain(), nil
 
 }
+
+func (sr *stockOutRepository) ExportToExcel(ctx context.Context) ([]stockouts.Domain, error) {
+	var records []StockOut
+	if err := sr.conn.WithContext(ctx).Find(&records).Error; err != nil {
+		return nil, err
+	}
+
+	categories := []stockouts.Domain{}
+
+	for _, category := range records {
+		categories = append(categories, category.ToDomain())
+	}
+
+	return categories, nil
+}
+
+// func (sr *stockOutRepository) ExportToExcel(ctx context.Context, filename string) error {
+// 	var records []StockOut
+
+// 	if err := sr.conn.WithContext(ctx).Find(&records).Error; err != nil {
+// 		return nil
+// 	}
+
+// 	// Buat file Excel baru
+// 	f := excelize.NewFile()
+
+// 	// Tambahkan header
+// 	for col, header := range []string{"ID", "Created At", "Deleted At", "Stock Location", "Stock Code", "Stock Name", "Stock Unit", "Stock Out", "Stock Total", "Stock ID"} {
+// 		cell := string('A'+rune(col)) + "1"
+// 		f.SetCellValue("Sheet1", cell, header)
+// 	}
+
+// 	// Tambahkan data
+// 	for row, stockOut := range records {
+// 		f.SetCellValue("Sheet1", fmt.Sprintf("A%d", row+2), stockOut.ID)
+// 		f.SetCellValue("Sheet1", fmt.Sprintf("B%d", row+2), stockOut.CreatedAt)
+// 		f.SetCellValue("Sheet1", fmt.Sprintf("C%d", row+2), stockOut.DeletedAt)
+// 		f.SetCellValue("Sheet1", fmt.Sprintf("D%d", row+2), stockOut.Stock_Location)
+// 		f.SetCellValue("Sheet1", fmt.Sprintf("E%d", row+2), stockOut.Stock_Code)
+// 		f.SetCellValue("Sheet1", fmt.Sprintf("F%d", row+2), stockOut.Stock_Name)
+// 		f.SetCellValue("Sheet1", fmt.Sprintf("G%d", row+2), stockOut.Stock_Unit)
+// 		f.SetCellValue("Sheet1", fmt.Sprintf("H%d", row+2), stockOut.Stock_Out)
+// 		f.SetCellValue("Sheet1", fmt.Sprintf("I%d", row+2), stockOut.Stock_Total)
+// 		f.SetCellValue("Sheet1", fmt.Sprintf("J%d", row+2), stockOut.StockID)
+// 	}
+
+// 	// Simpan ke file Excel
+// 	if err := f.SaveAs(filename); err != nil {
+// 		return nil
+// 	}
+
+// 	return nil
+// }
