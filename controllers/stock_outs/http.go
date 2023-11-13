@@ -105,41 +105,41 @@ func (sc *StockOutController) ExportToExcel(c echo.Context) error {
 		stoks = append(stoks, response.FromDomain(category))
 	}
 
-	// Tambahkan header ke lembar Excel
-	headers := []string{"No", "Tanggal Keluar", "Lokasi", "Kode", "Nama Barang", "Unit", "Barang Keluar", "Total Barang", "ID"}
-	err = f.SetSheetRow(sheetName, "A1", &headers)
+	// Tambahkan judul ke lembar Excel
+	titleHeader := "Data Stok - Rekapitulasi Barang Keluar"
+	err = f.SetCellValue(sheetName, "A1", titleHeader)
 	if err != nil {
-		return c.String(http.StatusInternalServerError, fmt.Sprintf("Error joining cell name: %s", err))
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("Error setting title header: %s", err))
+	}
+
+	// Merge dan atur gaya sel untuk judul agar berada di tengah
+	titleStyle, err := f.NewStyle(&excelize.Style{
+		Alignment: &excelize.Alignment{Horizontal: "center", Vertical: "center"},
+		Font:      &excelize.Font{Bold: true, Size: 14},
+	})
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("Error creating title style: %s", err))
+	}
+	f.SetCellStyle(sheetName, "A1", "I1", titleStyle)
+	f.MergeCell(sheetName, "A1", "I1")
+
+	// Tambahkan header tabel ke lembar Excel
+	headers := []string{"No", "Tanggal Keluar", "Lokasi", "Kode", "Nama Barang", "Unit", "Barang Keluar", "Total Barang", "ID"}
+	err = f.SetSheetRow(sheetName, "A2", &headers)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("Error setting sheet header: %s", err))
 	}
 
 	// Tambahkan data stok ke lembar Excel
 	for i, stok := range stoks {
 		rowData := []interface{}{stok.ID, stok.CreatedAt, stok.Stock_Location, stok.Stock_Code, stok.Stock_Name, stok.Stock_Unit, stok.Stock_Out, stok.Stock_Total, stok.StockID}
-		startCell, err := excelize.JoinCellName("A", i+2) // Mulai dari baris kedua
+		startCell, err := excelize.JoinCellName("A", i+3) // Mulai dari baris ketiga
 		if err != nil {
 			return c.String(http.StatusInternalServerError, fmt.Sprintf("Error joining cell name: %s", err))
 		}
 		if err := f.SetSheetRow(sheetName, startCell, &rowData); err != nil {
 			return c.String(http.StatusInternalServerError, fmt.Sprintf("Error setting sheet row: %s", err))
 		}
-	}
-
-	for colIndex, header := range headers {
-		colName, err := excelize.ColumnNumberToName(colIndex + 1) // Kolom ke-(colIndex+1) untuk header
-		if err != nil {
-			return c.String(http.StatusInternalServerError, fmt.Sprintf("Error converting column number: %s", err))
-		}
-
-		maxColWidth := len(header) + 2 // Panjang maksimum awal adalah panjang header + 2 untuk memberikan ruang
-
-		for i := 0; i < len(stoks)+1; i++ {
-			cellValue, err := f.GetCellValue(sheetName, fmt.Sprintf("%s%d", colName, i+1))
-			if err == nil && len(cellValue)+2 > maxColWidth {
-				maxColWidth = len(cellValue) + 2
-			}
-		}
-
-		f.SetColWidth(sheetName, colName, colName, float64(maxColWidth))
 	}
 
 	if err := f.SaveAs("DataStok.xlsx"); err != nil {
