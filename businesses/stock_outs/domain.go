@@ -20,12 +20,14 @@ type Domain struct {
 	StockID        uint
 }
 type Usecase interface {
+	GetAll(ctx context.Context) ([]Domain, error)
 	GetByID(ctx context.Context, id string) (Domain, error)
 	StockOut(ctx context.Context, stockOutDomain *Domain) (Domain, error)
 	ExportToExcel(ctx context.Context) ([]Domain, error)
 }
 
 type Repository interface {
+	GetAll(ctx context.Context) ([]Domain, error)
 	GetByID(ctx context.Context, id string) (Domain, error)
 	StockOut(ctx context.Context, stockOutDomain *Domain) (Domain, error)
 	ExportToExcel(ctx context.Context) ([]Domain, error)

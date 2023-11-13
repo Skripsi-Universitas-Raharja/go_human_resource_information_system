@@ -20,6 +20,30 @@ func NewMySQLRepository(conn *gorm.DB) stockouts.Repository {
 	}
 }
 
+func (sr *stockOutRepository) GetAll(ctx context.Context) ([]stockouts.Domain, error) {
+	var records []StockOut
+	if err := sr.conn.WithContext(ctx).Find(&records).Error; err != nil {
+		return nil, err
+	}
+
+	categories := []stockouts.Domain{}
+
+	for _, category := range records {
+		// Dapatkan Stock dari tabel stok menggunakan StockID
+		var stock _dbStocks.Stock
+		if err := sr.conn.WithContext(ctx).First(&stock, "id = ?", category.StockID).Error; err != nil {
+			return nil, err
+		}
+
+		domain := category.ToDomain()
+		// Set Stock_Code dari Stock ke Domain
+		domain.Stock_Code = stock.Stock_Code
+		categories = append(categories, domain)
+	}
+
+	return categories, nil
+}
+
 func (ur *stockOutRepository) GetByID(ctx context.Context, id string) (stockouts.Domain, error) {
 	var stockout StockOut
 
@@ -83,7 +107,16 @@ func (sr *stockOutRepository) ExportToExcel(ctx context.Context) ([]stockouts.Do
 	categories := []stockouts.Domain{}
 
 	for _, category := range records {
-		categories = append(categories, category.ToDomain())
+		// Dapatkan Stock dari tabel stok menggunakan StockID
+		var stock _dbStocks.Stock
+		if err := sr.conn.WithContext(ctx).First(&stock, "id = ?", category.StockID).Error; err != nil {
+			return nil, err
+		}
+
+		domain := category.ToDomain()
+		// Set Stock_Code dari Stock ke Domain
+		domain.Stock_Code = stock.Stock_Code
+		categories = append(categories, domain)
 	}
 
 	return categories, nil

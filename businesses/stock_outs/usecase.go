@@ -17,6 +17,9 @@ func NewStockOutUseCase(repository Repository, jwtAuth *middlewares.JWTConfig) U
 	}
 }
 
+func (usecase *stockoutUsecase) GetAll(ctx context.Context) ([]Domain, error) {
+	return usecase.stockRepository.GetAll(ctx)
+}
 func (usecase *stockoutUsecase) GetByID(ctx context.Context, id string) (Domain, error) {
 	return usecase.stockRepository.GetByID(ctx, id)
 }

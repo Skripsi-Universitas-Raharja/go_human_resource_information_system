@@ -8,7 +8,6 @@ import (
 	"backend-golang/controllers/stock_outs/request"
 	"backend-golang/controllers/stock_outs/response"
 
-	// _DBstockouts "backend-golang/drivers/mysql/stock_outs"
 	"net/http"
 
 	"github.com/xuri/excelize/v2"
@@ -24,6 +23,24 @@ func NewStockOutController(authUC stockouts.Usecase) *StockOutController {
 	return &StockOutController{
 		stockUseCase: authUC,
 	}
+}
+
+func (sc *StockOutController) GetAll(c echo.Context) error {
+	ctx := c.Request().Context()
+
+	categoriesData, err := sc.stockUseCase.GetAll(ctx)
+
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusInternalServerError, http.StatusInternalServerError, true, "failed to fetch data", "")
+	}
+
+	categories := []response.StockOut{}
+
+	for _, category := range categoriesData {
+		categories = append(categories, response.FromDomain(category))
+	}
+
+	return controllers.NewResponse(c, http.StatusOK, http.StatusOK, false, "all categories", categories)
 }
 
 func (cc *StockOutController) GetByID(c echo.Context) error {
@@ -65,12 +82,17 @@ func (sc *StockOutController) StockOut(c echo.Context) error {
 
 func (sc *StockOutController) ExportToExcel(c echo.Context) error {
 	ctx := c.Request().Context()
+	// var stock _dbStocks.Stock
+
 	// Buat file Excel baru
 	f := excelize.NewFile()
 	sheetName := "DataStok"
 	f.SetSheetName("Sheet1", sheetName)
 
 	categoriesData, err := sc.stockUseCase.ExportToExcel(ctx)
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusInternalServerError, http.StatusInternalServerError, true, "failed to fetch data", "")
+	}
 
 	// Contoh data stok
 	stoks := []response.StockOut{
@@ -84,7 +106,7 @@ func (sc *StockOutController) ExportToExcel(c echo.Context) error {
 	}
 
 	// Tambahkan header ke lembar Excel
-	headers := []string{"Lokasi", "Kode", "Nama", "Unit", "Keluar", "Total", "ID"}
+	headers := []string{"No", "Tanggal Keluar", "Lokasi", "Kode", "Nama Barang", "Unit", "Barang Keluar", "Total Barang", "ID"}
 	err = f.SetSheetRow(sheetName, "A1", &headers)
 	if err != nil {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("Error joining cell name: %s", err))
@@ -92,7 +114,7 @@ func (sc *StockOutController) ExportToExcel(c echo.Context) error {
 
 	// Tambahkan data stok ke lembar Excel
 	for i, stok := range stoks {
-		rowData := []interface{}{stok.Stock_Location, stok.Stock_Code, stok.Stock_Name, stok.Stock_Unit, stok.Stock_Out, stok.Stock_Total, stok.StockID}
+		rowData := []interface{}{stok.ID, stok.CreatedAt, stok.Stock_Location, stok.Stock_Code, stok.Stock_Name, stok.Stock_Unit, stok.Stock_Out, stok.Stock_Total, stok.StockID}
 		startCell, err := excelize.JoinCellName("A", i+2) // Mulai dari baris kedua
 		if err != nil {
 			return c.String(http.StatusInternalServerError, fmt.Sprintf("Error joining cell name: %s", err))
