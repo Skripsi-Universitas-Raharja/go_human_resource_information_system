@@ -41,14 +41,13 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	stocks.GET("/:id", cl.StocksController.GetByID)
 	stocks.GET("/:id", cl.StocksController.DownloadBarcodeByID)
 	stocks.POST("", cl.StocksController.Create)
-	// stocks.PUT("/stock_in/:id", cl.StocksController.StockIn)
-	// stocks.PUT("/stock_out/:id", cl.StocksController.StockOut)
 
-	stockIns := e.Group("stock_ins", echojwt.WithConfig(cl.JWTMiddleware))
+	// stockIns := e.Group("stock_ins", echojwt.WithConfig(cl.JWTMiddleware))
+	stockIns := e.Group("stock_ins")
 	stockIns.POST("/create", cl.StockInsController.Create)
-	stockIns.POST("", cl.StockInsController.StockIn)
 	stockIns.GET("", cl.StockInsController.GetAll)
-	// stockIns.GET("/download", cl.StockInsController.ExportToExcel)
+	stockIns.POST("", cl.StockInsController.StockIn)
+	stockIns.GET("/download", cl.StockInsController.ExportToExcel)
 
 	// stockouts := e.Group("stock_outs", echojwt.WithConfig(cl.JWTMiddleware))
 	stockouts := e.Group("stock_outs")

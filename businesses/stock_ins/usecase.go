@@ -30,3 +30,7 @@ func (usecase *stockInUsecase) Create(ctx context.Context, stockInDomain *Domain
 func (usecase *stockInUsecase) StockIn(ctx context.Context, stockInDomain *Domain) (Domain, error) {
 	return usecase.stockInRepository.StockIn(ctx, stockInDomain)
 }
+
+func (usecase *stockInUsecase) ExportToExcel(ctx context.Context) ([]Domain, error) {
+	return usecase.stockInRepository.ExportToExcel(ctx)
+}

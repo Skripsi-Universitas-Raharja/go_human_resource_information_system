@@ -25,6 +25,7 @@ type Usecase interface {
 	GetAll(ctx context.Context) ([]Domain, error)
 	Create(ctx context.Context, stockInDomain *Domain) (Domain, error)
 	StockIn(ctx context.Context, stockInDomain *Domain) (Domain, error)
+	ExportToExcel(ctx context.Context) ([]Domain, error)
 }
 
 type Repository interface {
@@ -32,8 +33,5 @@ type Repository interface {
 	GetAll(ctx context.Context) ([]Domain, error)
 	Create(ctx context.Context, stockInDomain *Domain) (Domain, error)
 	StockIn(ctx context.Context, stockInDomain *Domain) (Domain, error)
-
-	// Register(ctx context.Context, userDomain *Domain) (Domain, error)
-	// GetByEmail(ctx context.Context, userDomain *Domain) (Domain, error)
-	// DeleteCustomer(ctx context.Context, id string) (error)
+	ExportToExcel(ctx context.Context) ([]Domain, error)
 }
