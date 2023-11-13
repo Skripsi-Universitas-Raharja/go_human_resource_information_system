@@ -22,14 +22,14 @@ type Domain struct {
 }
 type Usecase interface {
 	// GetByID(ctx context.Context, id string) (Domain, error)
-	// GetAll(ctx context.Context) ([]Domain, error)
+	GetAll(ctx context.Context) ([]Domain, error)
 	Create(ctx context.Context, stockInDomain *Domain) (Domain, error)
 	StockIn(ctx context.Context, stockInDomain *Domain) (Domain, error)
 }
 
 type Repository interface {
 	// GetByID(ctx context.Context, id string) (Domain, error)
-	// GetAll(ctx context.Context) ([]Domain, error)
+	GetAll(ctx context.Context) ([]Domain, error)
 	Create(ctx context.Context, stockInDomain *Domain) (Domain, error)
 	StockIn(ctx context.Context, stockInDomain *Domain) (Domain, error)
 

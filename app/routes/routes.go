@@ -47,6 +47,8 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	stockIns := e.Group("stock_ins", echojwt.WithConfig(cl.JWTMiddleware))
 	stockIns.POST("/create", cl.StockInsController.Create)
 	stockIns.POST("", cl.StockInsController.StockIn)
+	stockIns.GET("", cl.StockInsController.GetAll)
+	// stockIns.GET("/download", cl.StockInsController.ExportToExcel)
 
 	// stockouts := e.Group("stock_outs", echojwt.WithConfig(cl.JWTMiddleware))
 	stockouts := e.Group("stock_outs")

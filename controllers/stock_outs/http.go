@@ -124,6 +124,24 @@ func (sc *StockOutController) ExportToExcel(c echo.Context) error {
 		}
 	}
 
+	for colIndex, header := range headers {
+		colName, err := excelize.ColumnNumberToName(colIndex + 1) // Kolom ke-(colIndex+1) untuk header
+		if err != nil {
+			return c.String(http.StatusInternalServerError, fmt.Sprintf("Error converting column number: %s", err))
+		}
+
+		maxColWidth := len(header) + 2 // Panjang maksimum awal adalah panjang header + 2 untuk memberikan ruang
+
+		for i := 0; i < len(stoks)+1; i++ {
+			cellValue, err := f.GetCellValue(sheetName, fmt.Sprintf("%s%d", colName, i+1))
+			if err == nil && len(cellValue)+2 > maxColWidth {
+				maxColWidth = len(cellValue) + 2
+			}
+		}
+
+		f.SetColWidth(sheetName, colName, colName, float64(maxColWidth))
+	}
+
 	if err := f.SaveAs("DataStok.xlsx"); err != nil {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("Error setting headers: %s", err))
 	}
@@ -138,70 +156,3 @@ func (sc *StockOutController) ExportToExcel(c echo.Context) error {
 	}
 	return nil
 }
-
-// }
-// func (sc *StockOutController) ExportToExcel(c echo.Context) error {
-// 	ctx := c.Request().Context()
-
-// 	filename := "stock_outs.xlsx"
-// 	categoriesData, err := sc.stockUseCase.ExportToExcel(ctx, filename)
-
-// 	if err != nil {
-// 		return controllers.NewResponse(c, http.StatusInternalServerError, http.StatusInternalServerError, true, "failed to fetch data", "")
-// 	}
-
-// 	f := excelize.NewFile()
-
-// 	for col, header := range []string{"ID", "Created At", "Deleted At", "Stock Location", "Stock Code", "Stock Name", "Stock Unit", "Stock Out", "Stock Total", "Stock ID"} {
-// 		cell := string('A'+rune(col)) + "1"
-// 		f.SetCellValue("Sheet1", cell, header)
-// 	}
-
-// 	for row, stockOut := range categoriesData {
-// 		f.SetCellValue("Sheet1", fmt.Sprintf("A%d", row+2), stockOut.ID)
-// 		f.SetCellValue("Sheet1", fmt.Sprintf("B%d", row+2), stockOut.CreatedAt)
-// 		f.SetCellValue("Sheet1", fmt.Sprintf("C%d", row+2), stockOut.DeletedAt)
-// 		f.SetCellValue("Sheet1", fmt.Sprintf("D%d", row+2), stockOut.Stock_Location)
-// 		f.SetCellValue("Sheet1", fmt.Sprintf("E%d", row+2), stockOut.Stock_Code)
-// 		f.SetCellValue("Sheet1", fmt.Sprintf("F%d", row+2), stockOut.Stock_Name)
-// 		f.SetCellValue("Sheet1", fmt.Sprintf("G%d", row+2), stockOut.Stock_Unit)
-// 		f.SetCellValue("Sheet1", fmt.Sprintf("H%d", row+2), stockOut.Stock_Out)
-// 		f.SetCellValue("Sheet1", fmt.Sprintf("I%d", row+2), stockOut.Stock_Total)
-// 		f.SetCellValue("Sheet1", fmt.Sprintf("J%d", row+2), stockOut.StockID)
-// 	}
-
-// 	if err := f.SaveAs(filename); err != nil {
-// 		return controllers.NewResponse(c, http.StatusInternalServerError, http.StatusInternalServerError, true, "failed to save Excel file", "")
-// 	}
-
-// 	c.Response().Header().Set("Content-Description", "File Transfer")
-// 	c.Response().Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
-// 	c.Response().Header().Set("Content-Type", "application/octet-stream")
-// 	c.Response().Header().Set("Content-Transfer-Encoding", "binary")
-
-// 	return controllers.NewResponse(c, http.StatusOK, http.StatusOK, false, "category found", categoriesData)
-// }
-
-// func (sc *StockOutController) ExportToExcel(c echo.Context) error {
-// 	ctx := c.Request().Context()
-// 	filename := "stock_outs.xlsx"
-
-// 	categoriesData, err := sc.stockUseCase.ExportToExcel(ctx, filename)
-
-// 	if err != nil {
-// 		return controllers.NewResponse(c, http.StatusInternalServerError, http.StatusInternalServerError, true, "failed to fetch data", "")
-// 	}
-
-// 	categories := []response.StockOut{}
-
-// 	for _, category := range categoriesData {
-// 		categories = append(categories, response.FromDomain(category))
-// 	}
-
-// 	c.Response().Header().Set("Content-Description", "File Transfer")
-// 	c.Response().Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
-// 	c.Response().Header().Set("Content-Type", "application/octet-stream")
-// 	c.Response().Header().Set("Content-Transfer-Encoding", "binary")
-
-// 	return controllers.NewResponse(c, http.StatusOK, http.StatusOK, false, "category found", categories)
-// }

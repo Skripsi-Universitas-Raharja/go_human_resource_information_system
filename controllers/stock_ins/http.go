@@ -23,6 +23,24 @@ func NewStockInController(courseUC stockins.Usecase) *StockInController {
 	}
 }
 
+func (sc *StockInController) GetAll(c echo.Context) error {
+	ctx := c.Request().Context()
+
+	categoriesData, err := sc.stockUsecase.GetAll(ctx)
+
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusInternalServerError, http.StatusInternalServerError, true, "failed to fetch data", "")
+	}
+
+	categories := []response.StockIn{}
+
+	for _, category := range categoriesData {
+		categories = append(categories, response.FromDomain(category))
+	}
+
+	return controllers.NewResponse(c, http.StatusOK, http.StatusOK, false, "all categories", categories)
+}
+
 func (sc *StockInController) Create(c echo.Context) error {
 	input := request.StockIn{}
 	ctx := c.Request().Context()

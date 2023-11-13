@@ -20,6 +20,30 @@ func NewMySQLRepository(conn *gorm.DB) stockins.Repository {
 	}
 }
 
+func (sr *stockInRepository) GetAll(ctx context.Context) ([]stockins.Domain, error) {
+	var records []StockIn
+	if err := sr.conn.WithContext(ctx).Find(&records).Error; err != nil {
+		return nil, err
+	}
+
+	categories := []stockins.Domain{}
+
+	for _, category := range records {
+		// Dapatkan Stock dari tabel stok menggunakan StockID
+		var stock _dbStocks.Stock
+		if err := sr.conn.WithContext(ctx).First(&stock, "id = ?", category.StockID).Error; err != nil {
+			return nil, err
+		}
+
+		domain := category.ToDomain()
+		// Set Stock_Code dari Stock ke Domain
+		domain.Stock_Code = stock.Stock_Code
+		categories = append(categories, domain)
+	}
+
+	return categories, nil
+}
+
 func (sr *stockInRepository) Create(ctx context.Context, stockInDomain *stockins.Domain) (stockins.Domain, error) {
 	record := FromDomain(stockInDomain)
 

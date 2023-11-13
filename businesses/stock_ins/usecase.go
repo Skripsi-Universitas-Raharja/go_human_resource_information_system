@@ -19,9 +19,9 @@ func NewStockInUsecase(repository Repository, jwtAuth *middlewares.JWTConfig) Us
 	}
 }
 
-// func (usecase *stockInUsecase) GetAll(ctx context.Context) ([]Domain, error) {
-// 	return usecase.stockInRepository.GetAll(ctx)
-// }
+func (usecase *stockInUsecase) GetAll(ctx context.Context) ([]Domain, error) {
+	return usecase.stockInRepository.GetAll(ctx)
+}
 
 func (usecase *stockInUsecase) Create(ctx context.Context, stockInDomain *Domain) (Domain, error) {
 	return usecase.stockInRepository.Create(ctx, stockInDomain)
