@@ -4,6 +4,8 @@ import (
 	stockhistory "backend-golang/businesses/stock_history"
 	"context"
 
+	_dbStocks "backend-golang/drivers/mysql/stocks"
+
 	"gorm.io/gorm"
 )
 
@@ -15,6 +17,30 @@ func NewMySQLRepository(conn *gorm.DB) stockhistory.Repository {
 	return &stockHistoryRepository{
 		conn: conn,
 	}
+}
+
+func (sr *stockHistoryRepository) GetAll(ctx context.Context) ([]stockhistory.Domain, error) {
+	var records []StockHistory
+	if err := sr.conn.WithContext(ctx).Find(&records).Error; err != nil {
+		return nil, err
+	}
+
+	categories := []stockhistory.Domain{}
+
+	for _, category := range records {
+		// Dapatkan Stock dari tabel stok menggunakan StockID
+		var stock _dbStocks.Stock
+		if err := sr.conn.WithContext(ctx).First(&stock, "id = ?", category.StockID).Error; err != nil {
+			return nil, err
+		}
+
+		domain := category.ToDomain()
+		// Set Stock_Code dari Stock ke Domain
+		// domain.Stock_Code = stock.Stock_Code
+		categories = append(categories, domain)
+	}
+
+	return categories, nil
 }
 
 func (ur *stockHistoryRepository) GetByID(ctx context.Context, id string) (stockhistory.Domain, error) {
@@ -42,4 +68,28 @@ func (cr *stockHistoryRepository) Create(ctx context.Context, stockHistoryDomain
 
 	return record.ToDomain(), nil
 
+}
+
+func (sr *stockHistoryRepository) ExportToExcel(ctx context.Context) ([]stockhistory.Domain, error) {
+	var records []StockHistory
+	if err := sr.conn.WithContext(ctx).Find(&records).Error; err != nil {
+		return nil, err
+	}
+
+	categories := []stockhistory.Domain{}
+
+	for _, category := range records {
+		// Dapatkan Stock dari tabel stok menggunakan StockID
+		var stock _dbStocks.Stock
+		if err := sr.conn.WithContext(ctx).First(&stock, "id = ?", category.StockID).Error; err != nil {
+			return nil, err
+		}
+
+		domain := category.ToDomain()
+		// Set Stock_Code dari Stock ke Domain
+		domain.Stock_Code = stock.Stock_Code
+		categories = append(categories, domain)
+	}
+
+	return categories, nil
 }

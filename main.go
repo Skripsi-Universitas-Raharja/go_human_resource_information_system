@@ -51,6 +51,9 @@ func main() {
 
 	db := configDB.InitDB()
 
+	_dbDriver.SeedStocketail(db)
+	_dbDriver.SeedStockOutsDetail(db)
+
 	_dbDriver.MigrateDB(db)
 
 	configJWT := _middleware.JWTConfig{

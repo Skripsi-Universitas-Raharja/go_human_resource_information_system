@@ -16,7 +16,7 @@ type Domain struct {
 	Stock_Code     string
 	Stock_QRCode   string
 	Stock_Name     string
-	Unit           string
+	Stock_Unit     string
 	Stock_Total    int
 }
 type Usecase interface {

@@ -3,8 +3,10 @@ package stockins
 import (
 	stockins "backend-golang/businesses/stock_ins"
 	"context"
+	"errors"
 	"fmt"
 
+	_dbStockHistory "backend-golang/drivers/mysql/stock_history"
 	_dbStocks "backend-golang/drivers/mysql/stocks"
 
 	"gorm.io/gorm"
@@ -86,15 +88,38 @@ func (sr *stockInRepository) StockIn(ctx context.Context, stockInDomain *stockin
 		return stockins.Domain{}, err
 	}
 
+	// Cek apakah catatan sudah ada di tabel StockHistory
+	var stockHistory _dbStockHistory.StockHistory
+	err := sr.conn.WithContext(ctx).First(&stockHistory, "stock_id = ?", record.StockID).Error
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return stockins.Domain{}, err
+	}
+
 	// Perbarui total stok pada rekam riwayat stok
 	record.Stock_Location = stock.Stock_Location
 	record.Stock_Code = stock.Stock_Code
 	record.Stock_Name = stock.Stock_Name
-	record.Stock_Unit = stock.Unit
-	// record.StockInTransactions.Stock_Total = stock.Stock_Total
+	record.Stock_Unit = stock.Stock_Unit
 	record.Stock_Total = stock.Stock_Total
 
 	fmt.Println("Record StockTotal:", record.Stock_Total)
+
+	// Buat baru jika tidak ditemukan
+	stockHistory = _dbStockHistory.StockHistory{
+		// Inisialisasi nilai-nilai yang diperlukan
+		StockID:        record.StockID,
+		Stock_Location: record.Stock_Location,
+		Stock_Code:     record.Stock_Code,
+		Stock_Name:     record.Stock_Name,
+		Stock_Unit:     record.Stock_Unit,
+		Stock_In:       record.Stock_In,
+		Stock_Total:    record.Stock_Total,
+		// Tambahkan nilai-nilai lain yang diperlukan
+	}
+
+	if err := sr.conn.WithContext(ctx).Save(&stockHistory).Error; err != nil {
+		return stockins.Domain{}, err
+	}
 
 	// Simpan total stok yang diperbarui di tabel riwayat stok in
 	if err := sr.conn.WithContext(ctx).Save(&record).Error; err != nil {

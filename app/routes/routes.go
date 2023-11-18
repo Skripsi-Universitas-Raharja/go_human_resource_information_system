@@ -37,7 +37,8 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	users.PUT("/profiles/customer/:id", cl.ProfilesController.UpdateProfileUser)
 	users.PUT("/profiles/picture/:id", cl.ProfilesController.UploadProfileImage)
 
-	stocks := e.Group("stocks", echojwt.WithConfig(cl.JWTMiddleware))
+	// stocks := e.Group("stocks", echojwt.WithConfig(cl.JWTMiddleware))
+	stocks := e.Group("stocks")
 	stocks.GET("/:id", cl.StocksController.GetByID)
 	stocks.GET("/:id", cl.StocksController.DownloadBarcodeByID)
 	stocks.POST("", cl.StocksController.Create)
@@ -54,7 +55,12 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	stockouts.GET("", cl.StockOutsController.GetAll)
 	stockouts.POST("", cl.StockOutsController.StockOut)
 	stockouts.GET("/download", cl.StockOutsController.ExportToExcel)
+	stockouts.GET("/apriori", cl.StockOutsController.GetAprioriResults)
 
-	stockhistory := e.Group("stock_history", echojwt.WithConfig(cl.JWTMiddleware))
+	// stockhistory := e.Group("stock_history", echojwt.WithConfig(cl.JWTMiddleware))
+	stockhistory := e.Group("stock_history")
 	stockhistory.POST("", cl.StockHistoryController.Create)
+	stockhistory.GET("", cl.StockHistoryController.GetAll)
+	stockhistory.GET("/download", cl.StockHistoryController.ExportToExcel)
+
 }

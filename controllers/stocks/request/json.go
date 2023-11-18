@@ -11,7 +11,7 @@ type Stock struct {
 	Stock_Code     string `json:"stock_code" validate:"required"`
 	Stock_Name     string `json:"stock_name" validate:"required"`
 	Stock_QRCode   string `json:"stock_qrcode"`
-	Unit           string `json:"unit" validate:"required"`
+	Stock_Unit     string `json:"stock_unit" validate:"required"`
 	Stock_Total    int    `json:"stock_total"`
 }
 
@@ -21,7 +21,7 @@ func (req *Stock) ToDomain() *stocks.Domain {
 		Stock_Code:     req.Stock_Code,
 		Stock_QRCode:   req.Stock_QRCode,
 		Stock_Name:     req.Stock_Name,
-		Unit:           req.Unit,
+		Stock_Unit:     req.Stock_Unit,
 		Stock_Total:    req.Stock_Total,
 	}
 }

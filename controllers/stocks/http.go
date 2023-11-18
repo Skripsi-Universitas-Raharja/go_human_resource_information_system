@@ -80,7 +80,7 @@ func (cc *StockController) DownloadBarcodeByID(c echo.Context) error {
 		"Stock Code: %s\n"+
 		"Stock Name: %s\n"+
 		"Unit: %s\n"+
-		stockID, stock.CreatedAt, stock.Stock_Location, stock.Stock_Code, stock.Stock_Name, stock.Unit)
+		stockID, stock.CreatedAt, stock.Stock_Location, stock.Stock_Code, stock.Stock_Name, stock.Stock_Unit)
 
 	qrCode, err := qrcode.New(qrContent, qrcode.Medium)
 	if err != nil {

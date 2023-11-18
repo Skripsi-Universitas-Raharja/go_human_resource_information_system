@@ -13,18 +13,24 @@ type Domain struct {
 	UpdatedAt      time.Time
 	DeletedAt      gorm.DeletedAt
 	Stock_Location string
+	Stock_Code     string
 	Stock_Name     string
-	Unit           string
-	Stock_Out      float64
-	Stock_Total    float64
+	Stock_Unit     string
+	Stock_In       int
+	Stock_Out      int
+	Stock_Total    int
 	StockID        uint
 }
 type Usecase interface {
+	GetAll(ctx context.Context) ([]Domain, error)
 	GetByID(ctx context.Context, id string) (Domain, error)
 	Create(ctx context.Context, categoryDomain *Domain) (Domain, error)
+	ExportToExcel(ctx context.Context) ([]Domain, error)
 }
 
 type Repository interface {
+	GetAll(ctx context.Context) ([]Domain, error)
 	GetByID(ctx context.Context, id string) (Domain, error)
 	Create(ctx context.Context, categoryDomain *Domain) (Domain, error)
+	ExportToExcel(ctx context.Context) ([]Domain, error)
 }

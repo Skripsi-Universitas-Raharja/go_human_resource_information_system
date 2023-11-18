@@ -3,8 +3,10 @@ package stockouts
 import (
 	stockouts "backend-golang/businesses/stock_outs"
 	"context"
+	"errors"
 	"fmt"
 
+	_dbStockHistory "backend-golang/drivers/mysql/stock_history"
 	_dbStocks "backend-golang/drivers/mysql/stocks"
 
 	"gorm.io/gorm"
@@ -83,11 +85,37 @@ func (sr *stockOutRepository) StockOut(ctx context.Context, stockOutDomain *stoc
 	record.Stock_Location = stock.Stock_Location
 	record.Stock_Code = stock.Stock_Code
 	record.Stock_Name = stock.Stock_Name
-	record.Stock_Unit = stock.Unit
+	record.Stock_Unit = stock.Stock_Unit
 	// record.StockInTransactions.Stock_Total = stock.Stock_Total
 	record.Stock_Total = stock.Stock_Total
 
 	fmt.Println("Record StockTotal:", record.Stock_Total)
+	fmt.Println("Record StockCode:", record.Stock_Code)
+	fmt.Println("StockCode:", stock.Stock_Code)
+
+	// Cek apakah catatan sudah ada di tabel StockHistory
+	var stockHistory _dbStockHistory.StockHistory
+	err := sr.conn.WithContext(ctx).First(&stockHistory, "stock_id = ?", record.StockID).Error
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return stockouts.Domain{}, err
+	}
+
+	// Buat baru jika tidak ditemukan
+	stockHistory = _dbStockHistory.StockHistory{
+		// Inisialisasi nilai-nilai yang diperlukan
+		StockID:        record.StockID,
+		Stock_Location: record.Stock_Location,
+		Stock_Code:     record.Stock_Code,
+		Stock_Name:     record.Stock_Name,
+		Stock_Unit:     record.Stock_Unit,
+		Stock_Out:      record.Stock_Out,
+		Stock_Total:    record.Stock_Total,
+		// Tambahkan nilai-nilai lain yang diperlukan
+	}
+
+	if err := sr.conn.WithContext(ctx).Save(&stockHistory).Error; err != nil {
+		return stockouts.Domain{}, err
+	}
 
 	// Simpan total stok yang diperbarui di tabel riwayat stok in
 	if err := sr.conn.WithContext(ctx).Save(&record).Error; err != nil {
@@ -121,41 +149,3 @@ func (sr *stockOutRepository) ExportToExcel(ctx context.Context) ([]stockouts.Do
 
 	return categories, nil
 }
-
-// func (sr *stockOutRepository) ExportToExcel(ctx context.Context, filename string) error {
-// 	var records []StockOut
-
-// 	if err := sr.conn.WithContext(ctx).Find(&records).Error; err != nil {
-// 		return nil
-// 	}
-
-// 	// Buat file Excel baru
-// 	f := excelize.NewFile()
-
-// 	// Tambahkan header
-// 	for col, header := range []string{"ID", "Created At", "Deleted At", "Stock Location", "Stock Code", "Stock Name", "Stock Unit", "Stock Out", "Stock Total", "Stock ID"} {
-// 		cell := string('A'+rune(col)) + "1"
-// 		f.SetCellValue("Sheet1", cell, header)
-// 	}
-
-// 	// Tambahkan data
-// 	for row, stockOut := range records {
-// 		f.SetCellValue("Sheet1", fmt.Sprintf("A%d", row+2), stockOut.ID)
-// 		f.SetCellValue("Sheet1", fmt.Sprintf("B%d", row+2), stockOut.CreatedAt)
-// 		f.SetCellValue("Sheet1", fmt.Sprintf("C%d", row+2), stockOut.DeletedAt)
-// 		f.SetCellValue("Sheet1", fmt.Sprintf("D%d", row+2), stockOut.Stock_Location)
-// 		f.SetCellValue("Sheet1", fmt.Sprintf("E%d", row+2), stockOut.Stock_Code)
-// 		f.SetCellValue("Sheet1", fmt.Sprintf("F%d", row+2), stockOut.Stock_Name)
-// 		f.SetCellValue("Sheet1", fmt.Sprintf("G%d", row+2), stockOut.Stock_Unit)
-// 		f.SetCellValue("Sheet1", fmt.Sprintf("H%d", row+2), stockOut.Stock_Out)
-// 		f.SetCellValue("Sheet1", fmt.Sprintf("I%d", row+2), stockOut.Stock_Total)
-// 		f.SetCellValue("Sheet1", fmt.Sprintf("J%d", row+2), stockOut.StockID)
-// 	}
-
-// 	// Simpan ke file Excel
-// 	if err := f.SaveAs(filename); err != nil {
-// 		return nil
-// 	}
-
-// 	return nil
-// }

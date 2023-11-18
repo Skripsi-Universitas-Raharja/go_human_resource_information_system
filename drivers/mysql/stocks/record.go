@@ -19,7 +19,7 @@ type Stock struct {
 	Stock_Code     string         `json:"stock_code"`
 	Stock_QRCode   string         `json:"stock_qrcode"`
 	Stock_Name     string         `json:"stock_name"`
-	Unit           string         `json:"unit"`
+	Stock_Unit     string         `json:"stock_unit"`
 	Stock_Total    int            `json:"stock_total"`
 }
 
@@ -32,7 +32,7 @@ func (rec *Stock) ToDomain() stocks.Domain {
 		Stock_Code:     rec.Stock_Code,
 		Stock_Location: rec.Stock_Location,
 		Stock_Name:     rec.Stock_Name,
-		Unit:           rec.Unit,
+		Stock_Unit:     rec.Stock_Unit,
 		Stock_Total:    rec.Stock_Total,
 	}
 }
@@ -45,7 +45,7 @@ func FromDomain(domain *stocks.Domain) *Stock {
 		Stock_Location: domain.Stock_Location,
 		Stock_Code:     domain.Stock_Code,
 		Stock_Name:     domain.Stock_Name,
-		Unit:           domain.Unit,
+		Stock_Unit:     domain.Stock_Unit,
 		Stock_Total:    domain.Stock_Total,
 	}
 }

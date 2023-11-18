@@ -17,10 +17,18 @@ func NewStockHistoryUseCase(repository Repository, jwtAuth *middlewares.JWTConfi
 	}
 }
 
+func (usecase *stockHistoryUsecase) GetAll(ctx context.Context) ([]Domain, error) {
+	return usecase.stockRepository.GetAll(ctx)
+}
+
 func (usecase *stockHistoryUsecase) GetByID(ctx context.Context, id string) (Domain, error) {
 	return usecase.stockRepository.GetByID(ctx, id)
 }
 
 func (usecase *stockHistoryUsecase) Create(ctx context.Context, stockDomain *Domain) (Domain, error) {
 	return usecase.stockRepository.Create(ctx, stockDomain)
+}
+
+func (usecase *stockHistoryUsecase) ExportToExcel(ctx context.Context) ([]Domain, error) {
+	return usecase.stockRepository.ExportToExcel(ctx)
 }
